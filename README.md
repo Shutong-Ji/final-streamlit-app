@@ -19,7 +19,7 @@ Install the dependencies
 
 2. Run the streamlit app using
 
-    `` streamlit run NYC-accident.py``
+    `` streamlit run nyc-accident.py``
 
     The application will run on localhost:8501 by default.
 

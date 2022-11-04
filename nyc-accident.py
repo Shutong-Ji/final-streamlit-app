@@ -22,7 +22,7 @@ st.markdown('##### Month text_input can be used for Scatter Plot, Location of ac
 st.markdown('##### Map Selectbox can choose the type of map: Location of accident Map or Thermal Map')
 
 
-# 读取文件 删掉没有用的列
+# Read the file and delete unused columns
 plt.style.use('seaborn')
 df = pd.read_csv('NYC Accidents 2020.csv')
 df = df.sample(5000, random_state=200)
@@ -30,14 +30,14 @@ df = df.drop(['ZIP CODE', 'CROSS STREET NAME', 'OFF STREET NAME', 'NUMBER OF MOT
              'NUMBER OF CYCLIST INJURED', 'NUMBER OF CYCLIST KILLED', 'NUMBER OF MOTORIST KILLED', 'CONTRIBUTING FACTOR VEHICLE 3', 'CONTRIBUTING FACTOR VEHICLE 4', 'CONTRIBUTING FACTOR VEHICLE 5', 'VEHICLE TYPE CODE 3', 'VEHICLE TYPE CODE 4', 'VEHICLE TYPE CODE 5'], axis=1)
 df.rename(columns={"LATITUDE": "lat", "LONGITUDE": "lon"}, inplace=True)
 
-# 处理空值
+# Handle a null value
 df['lat'].fillna(0, inplace=True)
 df['lon'].fillna(0, inplace=True)
 df['BOROUGH'].fillna('UNKOWN', inplace=True)
 df['ON STREET NAME'].fillna('UNKOWN', inplace=True)
 df['CONTRIBUTING FACTOR VEHICLE 1'].fillna('Unspecified', inplace=True)
 
-# 读取数据和数据预处理
+# Data reading and data preprocessing
 df1 = pd.read_csv('NYC Accidents 2020.csv')
 
 df1 = df1.drop(['ZIP CODE', 'CROSS STREET NAME', 'OFF STREET NAME', 'NUMBER OF MOTORIST INJURED', 'CONTRIBUTING FACTOR VEHICLE 2', 'NUMBER OF PERSONS INJURED', 'NUMBER OF PERSONS KILLED', 'NUMBER OF PEDESTRIANS INJURED', 'NUMBER OF PEDESTRIANS KILLED',
@@ -47,7 +47,7 @@ df1.LONGITUDE.fillna(0, inplace=True)
 df1.LATITUDE.fillna(0, inplace=True)
 df1.BOROUGH.fillna('UNKOWN', inplace=True)
 
-# 创建一个名为 hour 的列， 代表事故发生的时间（1-24小时）
+# Create a column called hour, representing the time of the accident (1-24 hours)
 
 
 def get_hour(TIME):
@@ -58,7 +58,7 @@ def get_hour(TIME):
 
 df['hour'] = df['CRASH TIME'].apply(get_hour)
 
-# 展示事故发生最多的时间
+# Show when the most accidents occur
 hour_statistics = df['hour'].value_counts()
 sorted_hour_statistics = hour_statistics.sort_index()
 max_rate = 0
@@ -68,7 +68,7 @@ for i in range(0, 24):
         max_rate = df.hour.value_counts(normalize=True).sort_index()[i]
         time = i
 
-# 事故发生时间的折线图
+# A line graph showing the time of the accident
 st.subheader('Line Chart Of The Clock And Accidents:')
 _, yv = np.meshgrid(np.linspace(0, 1, 210), np.linspace(0, 1, 90))
 hour = [i for i in range(24)]
@@ -103,7 +103,7 @@ st.pyplot(fig)
 
 
 
-# 事故发生区域图
+# Map of the accident area
 st.subheader('Bar Chart Of The Borough Accidents:')
 a = df.BOROUGH.value_counts(normalize=True).drop('UNKOWN')
 fig, ax = plt.subplots()
@@ -112,7 +112,7 @@ plt.xticks(rotation=0)
 st.markdown('##### The bar chart shows that, excluding accidents of unknown location, Brooklyn has the largest proportion of accidents, while Staten Island has the least. ')
 st.pyplot(fig)
 
-# 筛选事故发生的区
+# Screen the area where the accident occurred
 borough_filter = st.sidebar.multiselect(
     'Borough Selector',
     df.BOROUGH.unique(),
@@ -120,7 +120,7 @@ borough_filter = st.sidebar.multiselect(
 )
 df = df[df.BOROUGH.isin(borough_filter)]
 
-# 创建一个事故时间与事故街区的热图
+# Create a heat map of accident time and accident block
 st.subheader('HeatMap Of Accidents per Borough and Hour:')
 accidents_hour_pt = df.pivot_table(
     index='BOROUGH', columns='hour', aggfunc='size')
@@ -140,12 +140,12 @@ plt.colorbar(im)
 st.markdown('##### The heatmap shows the relationship between time and borough.')
 st.pyplot(fig)
 
-# slider 用于过滤发生事故的时间
+# slider Used to filter the time of the accident
 df = df[df.lon <= -21]
 time_filter = st.sidebar.slider('Crash Time:', 0, 23, 12)
 df = df[df.hour == time_filter]
 
-# 创建一个month列，为事故发生的月份
+# Create a month column for the month in which the accident occurred
 
 
 def get_month(Month):
@@ -156,17 +156,17 @@ def get_month(Month):
 
 df['month'] = df['CRASH DATE'].apply(get_month)
 
-# 在左边创建一个表单， 用于输入发生的月份
+# Create a form on the left for the month in which it occurred
 form = st.sidebar.form("month_form")
 month_filter = form.text_input(
     'Enter the number of month(enter ALL to reset)', 'ALL')
 form.form_submit_button("Apply")
 
-# 过滤发生事故的月份
+# Filter for the month of the accident
 if month_filter != 'ALL':
     df = df[df.month == int(month_filter)]
 
-# 5000个样本事故原因图
+# 5000 sample accident cause maps
 df2 = pd.read_csv('NYC Accidents 2020.csv')
 df2 = df2.sample(5000, random_state=180)
 df2 = df2.drop(['ZIP CODE', 'CROSS STREET NAME', 'OFF STREET NAME', 'NUMBER OF MOTORIST INJURED', 'CONTRIBUTING FACTOR VEHICLE 2', 'NUMBER OF PERSONS INJURED', 'NUMBER OF PERSONS KILLED', 'NUMBER OF PEDESTRIANS INJURED', 'NUMBER OF PEDESTRIANS KILLED',
@@ -184,7 +184,7 @@ st.subheader('Bar Chart of the cause of the accident in 5,000 samples:')
 st.markdown('##### As can be clearly seen from the bar chart, the main cause of accidents is distraction while driving.')
 st.pyplot(fig)
 
-# 一月发生事故的散点图, 描绘一月发生事故的大致地点与事故原因
+# Scatter plot of accidents in January, depicting the general location and causes of accidents in January
 st.subheader('Scatter Plot of the cause of the accident in 5,000 samples:')
 df_1 = df
 plt.figure(figsize=(7.5, 10))
@@ -196,11 +196,11 @@ st.markdown('##### By taking longitude and latitude as the coordinate axis, we f
 st.pyplot()
 
 
-# 用folium 规定地图的中心和缩放比例
+# Specify the center and zoom of the map with folium
 mmap = folium.Map(location=[40.8, -73.05], zoom_start=10.2)
 marker_cluster = plugins.MarkerCluster().add_to(mmap)
 
-# 输入每个点的经纬度信息 画出第一张地图
+# Enter the latitude and longitude information for each point to draw the first map
 for i in range(len(df)):
     lat = df.iloc[i][3]
     lon = df.iloc[i][4]
@@ -238,7 +238,7 @@ for i in range(len(r)):
         color='red', icon='info-sign'), fill=True).add_to(mmap)
 
 
-# 画事故发生的数量地图
+# Draw a map of the number of accidents
 location = df1['LOCATION'].value_counts()
 count_loc = pd.DataFrame({'LOCATION': location.index, 'ValueCount': location})
 count_loc.index = range(len(location))
@@ -268,13 +268,13 @@ for i in range(1000):
                         radius=radius, color=color, fill=True).add_to(nmap)
 
 
-# 热成像图
+# Thermal imaging figure
 the_loc.rename(columns={"LATITUDE": "lat", "LONGITUDE": "lon"}, inplace=True)
 the_loc.lon.fillna(0, inplace=True)
 the_loc.lat.fillna(0, inplace=True)
 HeatMap(data=the_loc[['lat', 'lon']], radius=17).add_to(nmap)
 
-# 选择地图
+# Select a map
 selectbox = st.sidebar.selectbox('Please choose the map type you want', [
                                  'Location of accident Map', 'Thermal Map'])
 if selectbox == 'Location of accident Map':

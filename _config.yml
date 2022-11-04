@@ -1,4 +1,4 @@
-remote_theme: pages-themes/dinky@v0.2.0
+remote_theme: pages-themes/cayman@v0.2.0
 plugins:
 - jekyll-remote-theme # add this line to the plugins list if you already have one
 title: Traffic accident analysis in New York City, January-August 2020 by Shutong Ji and Henian Wu

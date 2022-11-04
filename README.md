@@ -23,7 +23,7 @@ Install the dependencies
 
     The application will run on localhost:8501 by default.
 
-5. You can also use it directly online by visiting the [Link](https://docs.streamlit.io/en/latest/streamlit_configuration.html#view-all-config-options). 
+5. You can also use it directly online by visiting the [Link](https://shutong-ji-final-streamlit-app-nyc-accident-fzzln0.streamlit.app/). 
 
 ### Screenshots
 

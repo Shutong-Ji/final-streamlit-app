@@ -6,3 +6,4 @@ numpy
 seaborn
 streamlit_folium
 scikit-learn
+tkinter
